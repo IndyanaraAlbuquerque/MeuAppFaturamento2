@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, Picker, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Picker } from '@react-native-picker/picker';
 
 // Função para formatar valores em reais
 const formatCurrency = amount => `R$ ${parseFloat(amount).toFixed(2).replace('.', ',')}`;
