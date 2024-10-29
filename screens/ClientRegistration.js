@@ -13,21 +13,24 @@ const ClientRegistration = ({ navigation }) => {
     }
 
     try {
+      const existingClientsData = await AsyncStorage.getItem('clients');
+      const existingClients = existingClientsData ? JSON.parse(existingClientsData) : [];
+
+      if (existingClients.find(client => client.name.toLowerCase() === clientName.toLowerCase())) {
+        Alert.alert("Erro", "Esse cliente já está registrado.");
+        return;
+      }
+
       const clientEntry = {
         name: clientName,
-        dateRegistered: new Date().toISOString(), // Adiciona a data de registro
+        dateRegistered: new Date().toISOString(),
       };
 
-      // Armazenar o cliente
-      const existingClients = await AsyncStorage.getItem('clients');
-      const clients = existingClients ? JSON.parse(existingClients) : [];
-
-      clients.push(clientEntry);
-      await AsyncStorage.setItem('clients', JSON.stringify(clients));
+      existingClients.push(clientEntry);
+      await AsyncStorage.setItem('clients', JSON.stringify(existingClients));
 
       console.log(`Cliente registrado: ${clientName}`);
       
-      // Limpa o campo após o registro
       setClientName('');
       Alert.alert("Sucesso", "Cliente registrado com sucesso!");
     } catch (error) {

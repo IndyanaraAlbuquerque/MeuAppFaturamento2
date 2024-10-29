@@ -13,14 +13,18 @@ const BillingRegistration = () => {
       return;
     }
 
+    if (isNaN(amount) || parseFloat(amount) <= 0) {
+      Alert.alert("Erro", "Valor do faturamento deve ser um número positivo.");
+      return;
+    }
+
     try {
       const billingEntry = {
         clientName,
-        amount,
-        date: new Date().toISOString(), // Adiciona a data de registro
+        amount: parseFloat(amount).toFixed(2), // Armazena sempre como número formatado
+        date: new Date().toISOString(),
       };
 
-      // Armazena a entrada de faturamento
       const existingData = await AsyncStorage.getItem('billings');
       const billings = existingData ? JSON.parse(existingData) : [];
 
@@ -29,7 +33,6 @@ const BillingRegistration = () => {
 
       console.log(`Faturamento registrado: R$ ${amount} para ${clientName}`);
       
-      // Limpa os campos após o registro
       setAmount('');
       setClientName('');
       Alert.alert("Sucesso", "Faturamento registrado com sucesso!");
@@ -52,7 +55,7 @@ const BillingRegistration = () => {
         placeholder="Valor do Faturamento"
         value={amount}
         keyboardType="numeric"
-        onChangeText={setAmount}
+        onChangeText={text => setAmount(text.replace(/,/g, '.'))} // Substitui vírgulas por pontos
       />
       <Button title="Registrar Faturamento" onPress={handleRegisterBilling} />
     </View>

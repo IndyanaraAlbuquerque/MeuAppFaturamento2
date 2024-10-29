@@ -8,8 +8,8 @@ const BillingSummary = () => {
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [filteredBillings, setFilteredBillings] = useState([]);
   const [selectedClient, setSelectedClient] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState(''); // Mês selecionado
-  const [selectedYear, setSelectedYear] = useState('');   // Ano selecionado
+  const [selectedMonth, setSelectedMonth] = useState('');
+  const [selectedYear, setSelectedYear] = useState('');
   const [clients, setClients] = useState([]);
 
   useEffect(() => {
@@ -19,11 +19,9 @@ const BillingSummary = () => {
         const parsedData = existingData ? JSON.parse(existingData) : [];
         setBillings(parsedData);
         
-        // Coletar clientes únicos
         const uniqueClients = [...new Set(parsedData.map(billing => billing.clientName))];
         setClients(uniqueClients);
 
-        // Calcular faturamento total
         const total = parsedData.reduce((acc, billing) => acc + parseFloat(billing.amount), 0);
         setTotalRevenue(total);
       } catch (error) {
@@ -57,6 +55,7 @@ const BillingSummary = () => {
       <Text style={styles.title}>Resumo de Faturamento</Text>
       <Text style={styles.totalRevenue}>Faturamento Total: R$ {totalRevenue.toFixed(2)}</Text>
 
+      {/* Filtros */}
       <Text>Filtrar por Cliente:</Text>
       <Picker
         selectedValue={selectedClient}
@@ -76,18 +75,10 @@ const BillingSummary = () => {
         onValueChange={(itemValue) => setSelectedMonth(itemValue)}
       >
         <Picker.Item label="Todos os Meses" value="" />
-        <Picker.Item label="Janeiro" value="January" />
-        <Picker.Item label="Fevereiro" value="February" />
-        <Picker.Item label="Março" value="March" />
-        <Picker.Item label="Abril" value="April" />
-        <Picker.Item label="Maio" value="May" />
-        <Picker.Item label="Junho" value="June" />
-        <Picker.Item label="Julho" value="July" />
-        <Picker.Item label="Agosto" value="August" />
-        <Picker.Item label="Setembro" value="September" />
-        <Picker.Item label="Outubro" value="October" />
-        <Picker.Item label="Novembro" value="November" />
-        <Picker.Item label="Dezembro" value="December" />
+        {Array.from({ length: 12 }, (_, i) => new Date(0, i).toLocaleString('default', { month: 'long' }))
+          .map((month, index) => (
+            <Picker.Item key={index} label={month} value={month} />
+          ))}
       </Picker>
 
       <Text>Filtrar por Ano:</Text>
@@ -97,8 +88,8 @@ const BillingSummary = () => {
         onValueChange={(itemValue) => setSelectedYear(itemValue)}
       >
         <Picker.Item label="Todos os Anos" value="" />
-        {years.map((year, index) => (
-          <Picker.Item key={index} label={year.toString()} value={year.toString()} />
+        {years.map((year) => (
+          <Picker.Item key={year} label={year.toString()} value={year.toString()} />
         ))}
       </Picker>
 
@@ -109,9 +100,9 @@ const BillingSummary = () => {
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <View style={styles.billingItem}>
-            <Text>Cliente: {item.clientName}</Text>
-            <Text>Valor: R$ {parseFloat(item.amount).toFixed(2)}</Text>
-            <Text>Data: {new Date(item.date).toLocaleDateString()}</Text>
+            <Text style={styles.billingText}>Cliente: {item.clientName}</Text>
+            <Text style={styles.billingText}>Valor: R$ {parseFloat(item.amount).toFixed(2)}</Text>
+            <Text style={styles.billingText}>Data: {new Date(item.date).toLocaleDateString()}</Text>
           </View>
         )}
         ListEmptyComponent={<Text>Nenhum faturamento registrado.</Text>}
@@ -123,24 +114,26 @@ const BillingSummary = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
     padding: 16,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginBottom: 8,
   },
   totalRevenue: {
     fontSize: 18,
     marginBottom: 16,
   },
   billingItem: {
-    marginBottom: 12,
     padding: 10,
+    marginVertical: 4,
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 5,
+  },
+  billingText: {
+    fontSize: 16,
   },
   picker: {
     height: 50,
