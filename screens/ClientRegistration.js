@@ -1,6 +1,6 @@
 // screens/ClientRegistration.js
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ClientRegistration = ({ navigation }) => {
@@ -30,7 +30,6 @@ const ClientRegistration = ({ navigation }) => {
       await AsyncStorage.setItem('clients', JSON.stringify(existingClients));
 
       console.log(`Cliente registrado: ${clientName}`);
-      
       setClientName('');
       Alert.alert("Sucesso", "Cliente registrado com sucesso!");
     } catch (error) {
@@ -41,15 +40,18 @@ const ClientRegistration = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Registrar Cliente</Text>
       <TextInput
         style={styles.input}
         placeholder="Nome do Cliente"
         value={clientName}
         onChangeText={setClientName}
       />
-      <Button title="Registrar Cliente" onPress={handleRegisterClient} />
-      <Button title="Registrar Faturamento" onPress={() => navigation.navigate('Registro de Faturamento')} />
-      <Button title="Ver Resumo de Faturamento" onPress={() => navigation.navigate('Resumo de Faturamento')} />
+      <Button title="Registrar Cliente" onPress={handleRegisterClient} color="#4CAF50" />
+      <View style={styles.buttonContainer}>
+        <Button title="Registrar Faturamento" onPress={() => navigation.navigate('Registro de Faturamento')} color="#2196F3" />
+        <Button title="Ver Resumo de Faturamento" onPress={() => navigation.navigate('Resumo de Faturamento')} color="#2196F3" />
+      </View>
     </View>
   );
 };
@@ -59,13 +61,28 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 16,
+    backgroundColor: '#F5F5F5',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center',
+    color: '#333',
   },
   input: {
-    height: 40,
-    borderColor: 'gray',
+    height: 50,
+    borderColor: '#BDBDBD',
     borderWidth: 1,
+    borderRadius: 6,
     marginBottom: 12,
-    paddingLeft: 8,
+    paddingLeft: 10,
+    backgroundColor: '#FFFFFF',
+  },
+  buttonContainer: {
+    marginTop: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
 });
 

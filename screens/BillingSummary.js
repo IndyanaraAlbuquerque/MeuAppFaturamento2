@@ -24,6 +24,7 @@ const BillingSummary = () => {
 
         const total = parsedData.reduce((acc, billing) => acc + parseFloat(billing.amount), 0);
         setTotalRevenue(total);
+        
       } catch (error) {
         console.error("Erro ao carregar dados de faturamento:", error);
       }
@@ -46,6 +47,12 @@ const BillingSummary = () => {
     });
 
     setFilteredBillings(filtered);
+    calculateTotalRevenue(filtered); // Adicionando o cálculo do total
+  };
+
+  const calculateTotalRevenue = (filtered) => {
+    const total = filtered.reduce((acc, billing) => acc + parseFloat(billing.amount), 0);
+    setTotalRevenue(total);
   };
 
   const years = Array.from(new Set(billings.map(billing => new Date(billing.date).getFullYear())));
@@ -55,8 +62,7 @@ const BillingSummary = () => {
       <Text style={styles.title}>Resumo de Faturamento</Text>
       <Text style={styles.totalRevenue}>Faturamento Total: R$ {totalRevenue.toFixed(2)}</Text>
 
-      {/* Filtros */}
-      <Text>Filtrar por Cliente:</Text>
+      <Text style={styles.label}>Filtrar por Cliente:</Text>
       <Picker
         selectedValue={selectedClient}
         style={styles.picker}
@@ -68,7 +74,7 @@ const BillingSummary = () => {
         ))}
       </Picker>
 
-      <Text>Filtrar por Mês:</Text>
+      <Text style={styles.label}>Filtrar por Mês:</Text>
       <Picker
         selectedValue={selectedMonth}
         style={styles.picker}
@@ -81,7 +87,7 @@ const BillingSummary = () => {
           ))}
       </Picker>
 
-      <Text>Filtrar por Ano:</Text>
+      <Text style={styles.label}>Filtrar por Ano:</Text>
       <Picker
         selectedValue={selectedYear}
         style={styles.picker}
@@ -93,7 +99,7 @@ const BillingSummary = () => {
         ))}
       </Picker>
 
-      <Button title="Aplicar Filtros" onPress={handleFilter} />
+      <Button title="Aplicar Filtros" onPress={handleFilter} color="#4CAF50" />
 
       <FlatList
         data={(filteredBillings.length > 0 ? filteredBillings : billings) || []}
@@ -115,30 +121,45 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: '#F5F5F5',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 8,
+    textAlign: 'center',
+    color: '#333',
   },
   totalRevenue: {
     fontSize: 18,
     marginBottom: 16,
+    textAlign: 'center',
+    color: '#333',
   },
   billingItem: {
     padding: 10,
     marginVertical: 4,
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: '#BDBDBD',
     borderRadius: 5,
+    backgroundColor: '#FFFFFF',
   },
   billingText: {
     fontSize: 16,
+    color: '#333',
+  },
+  label: {
+    marginBottom: 6,
+    fontSize: 16,
+    color: '#333',
   },
   picker: {
     height: 50,
-    width: '100%',
-    marginVertical: 12,
+    borderWidth: 1,
+    borderColor: '#BDBDBD',
+    borderRadius: 6,
+    marginBottom: 12,
+    backgroundColor: '#FFFFFF',
   },
 });
 
