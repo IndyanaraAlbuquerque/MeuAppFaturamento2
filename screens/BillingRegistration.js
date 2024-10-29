@@ -1,16 +1,42 @@
 // screens/BillingRegistration.js
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BillingRegistration = () => {
   const [amount, setAmount] = useState('');
   const [clientName, setClientName] = useState('');
 
-  const handleRegisterBilling = () => {
-    // Aqui você adicionaria a lógica de armazenar o faturamento
-    console.log(`Faturamento registrado: R$ ${amount} para ${clientName}`);
-    setAmount('');
-    setClientName('');
+  const handleRegisterBilling = async () => {
+    if (!amount || !clientName) {
+      Alert.alert("Erro", "Por favor, preencha todos os campos.");
+      return;
+    }
+
+    try {
+      const billingEntry = {
+        clientName,
+        amount,
+        date: new Date().toISOString(), // Adiciona a data de registro
+      };
+
+      // Armazena a entrada de faturamento
+      const existingData = await AsyncStorage.getItem('billings');
+      const billings = existingData ? JSON.parse(existingData) : [];
+
+      billings.push(billingEntry);
+      await AsyncStorage.setItem('billings', JSON.stringify(billings));
+
+      console.log(`Faturamento registrado: R$ ${amount} para ${clientName}`);
+      
+      // Limpa os campos após o registro
+      setAmount('');
+      setClientName('');
+      Alert.alert("Sucesso", "Faturamento registrado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao registrar faturamento", error);
+      Alert.alert("Erro", "Houve um problema ao registrar o faturamento.");
+    }
   };
 
   return (
