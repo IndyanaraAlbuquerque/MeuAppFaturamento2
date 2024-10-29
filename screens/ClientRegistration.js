@@ -1,4 +1,3 @@
-// screens/ClientRegistration.js
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -6,9 +5,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const ClientRegistration = ({ navigation }) => {
   const [clientName, setClientName] = useState('');
 
+  const isValidClientName = name => {
+    // Valida se o nome contém apenas letras e espaços
+    return /^[a-zA-Z\s]+$/.test(name);
+  };
+
   const handleRegisterClient = async () => {
-    if (!clientName) {
+    if (!clientName.trim()) {
       Alert.alert("Erro", "Por favor, insira o nome do cliente.");
+      return;
+    }
+
+    if (!isValidClientName(clientName)) {
+      Alert.alert("Erro", "O nome do cliente deve conter apenas letras e espaços.");
       return;
     }
 
@@ -23,7 +32,7 @@ const ClientRegistration = ({ navigation }) => {
 
       const clientEntry = {
         name: clientName,
-        dateRegistered: new Date().toISOString(),
+        dateRegistered: new Date().toLocaleString('pt-BR'),  // Formato legível
       };
 
       existingClients.push(clientEntry);
@@ -31,7 +40,11 @@ const ClientRegistration = ({ navigation }) => {
 
       console.log(`Cliente registrado: ${clientName}`);
       setClientName('');
-      Alert.alert("Sucesso", "Cliente registrado com sucesso!");
+
+      Alert.alert("Sucesso", "Cliente registrado com sucesso!", [
+        { text: "OK", onPress: () => navigation.navigate('Resumo de Faturamento') } // Navegar após o registro
+      ]);
+
     } catch (error) {
       console.error("Erro ao registrar cliente", error);
       Alert.alert("Erro", "Houve um problema ao registrar o cliente.");

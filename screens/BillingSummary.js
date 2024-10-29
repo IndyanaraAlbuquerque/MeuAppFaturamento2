@@ -1,7 +1,9 @@
-// screens/BillingSummary.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, Picker, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// Função para formatar valores em reais
+const formatCurrency = amount => `R$ ${parseFloat(amount).toFixed(2).replace('.', ',')}`;
 
 const BillingSummary = () => {
   const [billings, setBillings] = useState([]);
@@ -18,13 +20,13 @@ const BillingSummary = () => {
         const existingData = await AsyncStorage.getItem('billings');
         const parsedData = existingData ? JSON.parse(existingData) : [];
         setBillings(parsedData);
-        
+
+        // Extraindo clientes únicos
         const uniqueClients = [...new Set(parsedData.map(billing => billing.clientName))];
         setClients(uniqueClients);
 
         const total = parsedData.reduce((acc, billing) => acc + parseFloat(billing.amount), 0);
         setTotalRevenue(total);
-        
       } catch (error) {
         console.error("Erro ao carregar dados de faturamento:", error);
       }
@@ -47,20 +49,23 @@ const BillingSummary = () => {
     });
 
     setFilteredBillings(filtered);
-    calculateTotalRevenue(filtered); // Adicionando o cálculo do total
+    calculateTotalRevenue(filtered);
   };
 
+  // Utiliza useMemo para calcular o total de forma otimizada
   const calculateTotalRevenue = (filtered) => {
     const total = filtered.reduce((acc, billing) => acc + parseFloat(billing.amount), 0);
     setTotalRevenue(total);
   };
 
-  const years = Array.from(new Set(billings.map(billing => new Date(billing.date).getFullYear())));
+  const years = useMemo(() => {
+    return Array.from(new Set(billings.map(billing => new Date(billing.date).getFullYear())));
+  }, [billings]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Resumo de Faturamento</Text>
-      <Text style={styles.totalRevenue}>Faturamento Total: R$ {totalRevenue.toFixed(2)}</Text>
+      <Text style={styles.totalRevenue}>Faturamento Total: {formatCurrency(totalRevenue)}</Text>
 
       <Text style={styles.label}>Filtrar por Cliente:</Text>
       <Picker
@@ -94,7 +99,7 @@ const BillingSummary = () => {
         onValueChange={(itemValue) => setSelectedYear(itemValue)}
       >
         <Picker.Item label="Todos os Anos" value="" />
-        {years.map((year) => (
+        {years.map(year => (
           <Picker.Item key={year} label={year.toString()} value={year.toString()} />
         ))}
       </Picker>
@@ -107,7 +112,7 @@ const BillingSummary = () => {
         renderItem={({ item }) => (
           <View style={styles.billingItem}>
             <Text style={styles.billingText}>Cliente: {item.clientName}</Text>
-            <Text style={styles.billingText}>Valor: R$ {parseFloat(item.amount).toFixed(2)}</Text>
+            <Text style={styles.billingText}>Valor: {formatCurrency(item.amount)}</Text>
             <Text style={styles.billingText}>Data: {new Date(item.date).toLocaleDateString()}</Text>
           </View>
         )}

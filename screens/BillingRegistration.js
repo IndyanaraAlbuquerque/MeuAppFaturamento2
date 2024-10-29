@@ -1,6 +1,5 @@
-// screens/BillingRegistration.js
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert, Picker, Text } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 
@@ -11,22 +10,14 @@ const BillingRegistration = () => {
   const [selectedYear, setSelectedYear] = useState('');
 
   const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
   ];
 
   const years = Array.from({ length: 10 }, (_, index) => new Date().getFullYear() - index);
 
   const handleRegisterBilling = async () => {
-    if (!amount || !clientName || !selectedMonth || !selectedYear) {
-      Alert.alert("Erro", "Por favor, preencha todos os campos.");
-      return;
-    }
-
-    if (isNaN(amount) || parseFloat(amount) <= 0) {
-      Alert.alert("Erro", "Valor do faturamento deve ser um número positivo.");
-      return;
-    }
+    if (!validateInputs()) return;
 
     try {
       const date = new Date(`${selectedYear}-${months.indexOf(selectedMonth) + 1}-01`).toISOString();
@@ -42,15 +33,33 @@ const BillingRegistration = () => {
       await AsyncStorage.setItem('billings', JSON.stringify(billings));
 
       console.log(`Faturamento registrado: R$ ${amount} para ${clientName} na data ${date}`);
-      setAmount('');
-      setClientName('');
-      setSelectedMonth('');
-      setSelectedYear('');
+      resetFields(); // Função para redefinir os campos
       Alert.alert("Sucesso", "Faturamento registrado com sucesso!");
     } catch (error) {
       console.error("Erro ao registrar faturamento", error);
       Alert.alert("Erro", "Houve um problema ao registrar o faturamento.");
     }
+  };
+
+  const validateInputs = () => {
+    if (!amount.trim() || !clientName.trim() || !selectedMonth || !selectedYear) {
+      Alert.alert("Erro", "Por favor, preencha todos os campos.");
+      return false;
+    }
+
+    if (isNaN(amount) || parseFloat(amount) <= 0) {
+      Alert.alert("Erro", "O valor do faturamento deve ser um número positivo.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const resetFields = () => {
+    setAmount('');
+    setClientName('');
+    setSelectedMonth('');
+    setSelectedYear('');
   };
 
   return (
@@ -72,7 +81,7 @@ const BillingRegistration = () => {
       <Text style={styles.label}>Mês:</Text>
       <Picker
         selectedValue={selectedMonth}
-        onValueChange={(itemValue) => setSelectedMonth(itemValue)}
+        onValueChange={setSelectedMonth}
         style={styles.picker}
       >
         <Picker.Item label="Selecione um mês" value="" />
@@ -83,7 +92,7 @@ const BillingRegistration = () => {
       <Text style={styles.label}>Ano:</Text>
       <Picker
         selectedValue={selectedYear}
-        onValueChange={(itemValue) => setSelectedYear(itemValue)}
+        onValueChange={setSelectedYear}
         style={styles.picker}
       >
         <Picker.Item label="Selecione um ano" value="" />

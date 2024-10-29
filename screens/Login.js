@@ -1,17 +1,29 @@
-// screens/Login.js
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Alert, Text, TouchableOpacity } from 'react-native';
 
 const Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = () => {
-    if (username === 'adm123' && password === '123456') {
-      navigation.replace('ClientRegistration');
-    } else {
-      Alert.alert("Erro", "Credenciais inválidas. Tente novamente.");
+    if (!username || !password) {
+      Alert.alert("Erro", "Por favor, preencha todos os campos.");
+      return;
     }
+
+    setIsLoading(true);
+
+    // Simulação de uma pequena espera, por exemplo, uma chamada à API
+    setTimeout(() => {
+      if (username === 'adm123' && password === '123456') {
+        navigation.replace('ClientRegistration');
+      } else {
+        Alert.alert("Erro", "Credenciais inválidas. Tente novamente.");
+      }
+      setIsLoading(false);
+    }, 1000); // Simulando demora de 1 segundo
   };
 
   return (
@@ -23,14 +35,21 @@ const Login = ({ navigation }) => {
         value={username}
         onChangeText={setUsername}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <Button title="Login" onPress={handleLogin} color="#4CAF50" />
+      <View>
+        <TextInput
+          style={styles.input}
+          placeholder="Senha"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={!showPassword}
+        />
+        <TouchableOpacity onPress={() => setShowPassword(prev => !prev)}>
+          <Text style={styles.togglePassword}>
+            {showPassword ? "Ocultar" : "Mostrar"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <Button title={isLoading ? "Entrando..." : "Login"} onPress={handleLogin} color="#4CAF50" disabled={isLoading} />
     </View>
   );
 };
@@ -57,6 +76,11 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     textAlign: 'center',
     color: '#333333',
+  },
+  togglePassword: {
+    alignSelf: 'flex-end',
+    marginVertical: 8,
+    color: '#007BFF',
   },
 });
 
