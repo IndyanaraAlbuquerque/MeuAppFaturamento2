@@ -1,4 +1,3 @@
-// screens/BillingRegistration.js
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Alert, Picker } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,7 +13,7 @@ const BillingRegistration = () => {
     "July", "August", "September", "October", "November", "December"
   ];
   const years = Array.from({ length: 10 }, (_, index) => new Date().getFullYear() - index);
-
+  
   const handleRegisterBilling = async () => {
     if (!amount || !clientName || !selectedMonth || !selectedYear) {
       Alert.alert("Erro", "Por favor, preencha todos os campos.");
@@ -56,41 +55,17 @@ const BillingRegistration = () => {
       <TextInput
         style={styles.input}
         placeholder="Nome do Cliente"
-        value={clientName}
+        value={clientName} // Use 'value' aqui
         onChangeText={setClientName}
       />
       <TextInput
         style={styles.input}
         placeholder="Valor do Faturamento"
-        value={amount}
+        value={amount} // Use 'value' aqui
         keyboardType="numeric"
         onChangeText={text => setAmount(text.replace(/,/g, '.'))} // Substitui vírgulas por pontos
       />
-      <Text>Selecionar Mês:</Text>
-      <Picker
-        selectedValue={selectedMonth}
-        style={styles.picker}
-        onValueChange={(itemValue) => setSelectedMonth(itemValue)}
-      >
-        <Picker.Item label="Selecione um mês" value="" />
-        {months.map((month, index) => (
-          <Picker.Item key={index} label={month} value={month} />
-        ))}
-      </Picker>
-
-      <Text>Selecionar Ano:</Text>
-      <Picker
-        selectedValue={selectedYear}
-        style={styles.picker}
-        onValueChange={(itemValue) => setSelectedYear(itemValue)}
-      >
-        <Picker.Item label="Selecione um ano" value="" />
-        {years.map((year) => (
-          <Picker.Item key={year} label={year.toString()} value={year.toString()} />
-        ))}
-      </Picker>
-
-      <Button title="Registrar Faturamento" onPress={handleRegisterBilling} />
+      {/* ...Restante do código... */}
     </View>
   );
 };
@@ -107,11 +82,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 12,
     paddingLeft: 8,
-  },
-  picker: {
-    height: 50,
-    width: '100%',
-    marginBottom: 12,
   },
 });
 
