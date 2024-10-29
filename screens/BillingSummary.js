@@ -96,7 +96,7 @@ const BillingSummary = () => {
       <Button title="Aplicar Filtros" onPress={handleFilter} />
 
       <FlatList
-        data={filteredBillings.length > 0 ? filteredBillings : billings}
+        data={(filteredBillings.length > 0 ? filteredBillings : billings) || []}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <View style={styles.billingItem}>
