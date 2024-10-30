@@ -63,6 +63,7 @@ const ClientRegistration = ({ navigation }) => {
       <Button title="Registrar Cliente" onPress={handleRegisterClient} color="#4CAF50" />
       <View style={styles.buttonContainer}>
         <Button title="Registrar Faturamento" onPress={() => navigation.navigate('Registro de Faturamento')} color="#2196F3" />
+        <View style={{ marginVertical: 10 }} /> // Espaço entre os botões
         <Button title="Ver Resumo de Faturamento" onPress={() => navigation.navigate('Resumo de Faturamento')} color="#2196F3" />
       </View>
     </View>
