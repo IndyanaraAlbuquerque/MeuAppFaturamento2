@@ -41,9 +41,9 @@ const ClientRegistration = ({ navigation }) => {
       console.log(`Cliente registrado: ${clientName}`);
       setClientName('');
 
-      Alert.alert("Sucesso", "Cliente registrado com sucesso!", [
-        { text: "OK", onPress: () => navigation.navigate('Registro de Faturamento') } // Navegar após o registro
-      ]);
+      Alert.alert("Sucesso", "Cliente registrado com sucesso!", 
+        
+      );
 
     } catch (error) {
       console.error("Erro ao registrar cliente", error);
