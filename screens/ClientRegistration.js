@@ -42,7 +42,7 @@ const ClientRegistration = ({ navigation }) => {
       setClientName('');
 
       Alert.alert("Sucesso", "Cliente registrado com sucesso!", [
-        { text: "OK", onPress: () => navigation.navigate('Resumo de Faturamento') } // Navegar após o registro
+        { text: "OK", onPress: () => navigation.navigate('Registro de Faturamento') } // Navegar após o registro
       ]);
 
     } catch (error) {
